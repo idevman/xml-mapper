@@ -16,6 +16,13 @@ class XmlMapper {
      */
     public function mapTo(array $rules, string $xml) {
         $root = new SimpleXMLElement($xml);
+        preg_match_all('/xmlns:[\w]+=\"[\w|:|\/|\.]+\"/', $xml, $matches);
+        if ($matches && !empty($matches) && !empty($matches[0])) {
+            foreach ($matches[0] as $i) {
+                $nsTokens = explode('=', str_replace('"', '', substr($i, 6)));
+                $root->registerXPathNamespace($nsTokens[0], $nsTokens[1]);
+            }
+        }
 
         $response = [];
         foreach ($rules as $key => $value) {
