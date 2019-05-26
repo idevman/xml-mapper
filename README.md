@@ -1,4 +1,9 @@
 # XML Mapper
+[![Latest Stable Version](https://poser.pugx.org/idevman/xml-mapper/v/stable)](https://packagist.org/packages/idevman/xml-mapper)
+[![Total Downloads](https://poser.pugx.org/idevman/xml-mapper/downloads)](https://packagist.org/packages/idevman/xml-mapper)
+[![Latest Unstable Version](https://poser.pugx.org/idevman/xml-mapper/v/unstable)](https://packagist.org/packages/idevman/xml-mapper)
+[![License](https://poser.pugx.org/idevman/xml-mapper/license)](https://packagist.org/packages/idevman/xml-mapper)
+[![composer.lock](https://poser.pugx.org/idevman/xml-mapper/composerlock)](https://packagist.org/packages/idevman/xml-mapper)
 
 Create a mapped array from XML data using alias from MAP as laravel plugin.
 
