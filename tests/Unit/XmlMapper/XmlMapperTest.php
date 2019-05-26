@@ -23,10 +23,10 @@ class XmlMapperTest extends TestCase {
         $this->xml = '<note from="Tove" to="Jani">' .
         '<content heading="Reminder" body="Don\'t forget me this weekend!"/>' .
         '<raw>Simple text</raw>' .
-        '<item number="1">Table</item>' .
-        '<item number="2">Chair</item>' .
-        '<item number="3">Door</item>' .
-        '<item number="4">Window</item>' .
+        '<item number="1" value="50">Table</item>' .
+        '<item number="2" value="40">Chair</item>' .
+        '<item number="3" value="30">Door</item>' .
+        '<item number="4" value="60">Window</item>' .
         '</note>';
     }
 
@@ -77,6 +77,63 @@ class XmlMapperTest extends TestCase {
         $this->assertEquals('2', $response['allItemsNumber'][1]);
         $this->assertEquals('3', $response['allItemsNumber'][2]);
         $this->assertEquals('4', $response['allItemsNumber'][3]);
+    }
+
+    /**
+     * Should map node attributes
+     */
+    public function testShouldMapNodeAttribute() {
+        $response = XmlMapper::mapTo([
+            'addressing[from,to]' => '/note[@from,@to]',
+            'content[header,body]' => '/note/content[@heading,@body]',
+            'items[sequence,value]' => '/note/item[][@number,@value]',
+        ], $this->xml);
+        $this->assertNotNull($response);
+        $this->assertCount(3, $response);
+        $this->assertArrayHasKey('addressing', $response);
+        $this->assertArrayHasKey('content', $response);
+        $this->assertArrayHasKey('items', $response);
+
+        $this->assertCount(2, $response['addressing']);
+        $this->assertArrayHasKey('from', $response['addressing']);
+        $this->assertArrayHasKey('to', $response['addressing']);
+
+        $this->assertEquals('Tove', $response['addressing']['from']);
+        $this->assertEquals('Jani', $response['addressing']['to']);
+
+        $this->assertCount(2, $response['content']);
+        $this->assertArrayHasKey('header', $response['content']);
+        $this->assertArrayHasKey('body', $response['content']);
+
+        $this->assertEquals('Reminder', $response['content']['header']);
+        $this->assertEquals('Don\'t forget me this weekend!',
+            $response['content']['body']);
+
+        $this->assertCount(4, $response['items']);
+        
+        $this->assertCount(2, $response['items'][0]);
+        $this->assertArrayHasKey('sequence', $response['items'][0]);
+        $this->assertArrayHasKey('value', $response['items'][0]);
+        $this->assertEquals('1', $response['items'][0]['sequence']);
+        $this->assertEquals('50', $response['items'][0]['value']);
+
+        $this->assertCount(2, $response['items'][1]);
+        $this->assertArrayHasKey('sequence', $response['items'][1]);
+        $this->assertArrayHasKey('value', $response['items'][1]);
+        $this->assertEquals('2', $response['items'][1]['sequence']);
+        $this->assertEquals('40', $response['items'][1]['value']);
+
+        $this->assertCount(2, $response['items'][2]);
+        $this->assertArrayHasKey('sequence', $response['items'][2]);
+        $this->assertArrayHasKey('value', $response['items'][2]);
+        $this->assertEquals('3', $response['items'][2]['sequence']);
+        $this->assertEquals('30', $response['items'][2]['value']);
+
+        $this->assertCount(2, $response['items'][3]);
+        $this->assertArrayHasKey('sequence', $response['items'][3]);
+        $this->assertArrayHasKey('value', $response['items'][3]);
+        $this->assertEquals('4', $response['items'][3]['sequence']);
+        $this->assertEquals('60', $response['items'][3]['value']);
     }
 
 }

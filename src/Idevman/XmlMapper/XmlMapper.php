@@ -19,8 +19,19 @@ class XmlMapper {
 
         $response = [];
         foreach ($rules as $key => $value) {
-            $tokens = explode('@', $value);
-            $response[$key] = $this->getValue($root, $tokens);
+            if (Str::contains($value, '[@') && Str::endsWith($value, ']')) {
+                $pathTokens = explode('[@', $value);
+                $attributes = explode(',', 
+                    str_replace(']', '', str_replace('@', '', $pathTokens[1])));
+
+                $tokens = explode('[', str_replace(']', '', $key));
+
+                $response[$tokens[0]] = $this->getAttributes($root, 
+                    $pathTokens[0], $attributes, explode(',', $tokens[1]));
+            } else {
+                $tokens = explode('@', $value);
+                $response[$key] = $this->getValue($root, $tokens);
+            }
         }
         return $response;
     }
@@ -53,6 +64,40 @@ class XmlMapper {
             return (string)$nodes[0][$tokens[1]];
         }
         return (string)$nodes[0];
+    }
+
+    /**
+     * Retrieve value found path
+     * @param root Root node value
+     * @param path Path nod eto load
+     * @param attributes Attributes to load
+     * @param labels Arttribute labels data
+     */
+    private function getAttributes(SimpleXMLElement $root, string $path,
+                                   array $attributes, array $labels) {
+        $isArray = false;
+        if (Str::endsWith($path, '[]')) {
+            $isArray = true;
+            $path = str_replace('[]', '', $path);
+        }
+        $nodes = $root->xpath($path);
+        $total = count($attributes);
+        if ($isArray) {
+            $response = [];
+            foreach ($nodes as $i) {
+                $current = [];
+                for ($j = 0; $j < $total; $j++) {
+                    $current[$labels[$j]] = (string)$i[$attributes[$j]];
+                }
+                array_push($response, $current);
+            }
+            return $response;
+        }
+        $response = [];
+        for ($i = 0; $i < $total; $i++) {
+            $response[$labels[$i]] = (string)$nodes[0][$attributes[$i]];
+        }
+        return $response;
     }
 
 }

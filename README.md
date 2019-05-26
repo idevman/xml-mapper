@@ -41,10 +41,10 @@ To use it lets assume xml content:
 <note from="Tove" to="Jani">
     <content heading="Reminder" body="Don\'t forget me this weekend!"/>
     <raw>Simple text</raw>
-    <item number="1">Table</item>
-    <item number="2">Chair</item>
-    <item number="3">Door</item>
-    <item number="4">Window</item>
+    <item number="1" value="50">Table</item>
+    <item number="2" value="40">Chair</item>
+    <item number="3" value="30">Door</item>
+    <item number="4" value="60">Window</item>
 </note>
 ```
 
@@ -89,3 +89,50 @@ And `$response` will contain
   ]
 ]
 ```
+
+## Grouping attribute nodes
+
+Lets assuma same XML and load this in `$xml` variable and call like this:
+
+```php
+$response = XmlMapper::mapTo([
+    'addressing[from,to]' => '/note[@from,@to]',
+    'content[header,body]' => '/note/content[@heading,@body]',
+    'items[sequence,value]' => '/note/item[][@number,@value]',
+], $xml);
+```
+
+And `$response` will contain this result:
+
+```php
+[
+  "addressing" => [
+    "from" => "Tove"
+    "to" => "Jani"
+  ]
+  "content" => [
+    "header" => "Reminder"
+    "body" => "Don't forget me this weekend!"
+  ]
+  "items" => [
+    [
+      "sequence" => "1"
+      "value" => "50"
+    ],
+    [
+      "sequence" => "2"
+      "value" => "40"
+    ],
+    [
+      "sequence" => "3"
+      "value" => "30"
+    ],
+    [
+      "sequence" => "4"
+      "value" => "60"
+    ]
+  ]
+]
+```
+
+Note that labeling change according key array content
