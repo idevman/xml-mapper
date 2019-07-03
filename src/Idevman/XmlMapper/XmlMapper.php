@@ -55,12 +55,16 @@ class XmlMapper {
             $tokens[0] = str_replace('[]', '', $tokens[0]);
         }
         $nodes = $root->xpath($tokens[0]);
+        if (empty($nodes)) {
+            return null;
+        }
         $isAttribute = count($tokens) === 2;
         if ($isArray) {
             $response = [];
             foreach ($nodes as $i) {
                 if ($isAttribute) {
-                    array_push($response, (string)$i[$tokens[1]]);
+                    $value = (string)$i[$tokens[1]];
+                    array_push($response, !empty($value) ? $value : null);
                 } else {
                     array_push($response, (string)$i);
                 }
@@ -68,7 +72,8 @@ class XmlMapper {
             return $response;
         }
         if ($isAttribute) {
-            return (string)$nodes[0][$tokens[1]];
+            $value = (string)$nodes[0][$tokens[1]];
+            return !empty($value) ? $value : null;
         }
         return (string)$nodes[0];
     }
@@ -88,6 +93,9 @@ class XmlMapper {
             $path = str_replace('[]', '', $path);
         }
         $nodes = $root->xpath($path);
+        if (empty($nodes)) {
+            return null;
+        }
         $total = count($attributes);
         if ($isArray) {
             $response = [];
@@ -102,7 +110,8 @@ class XmlMapper {
         }
         $response = [];
         for ($i = 0; $i < $total; $i++) {
-            $response[$labels[$i]] = (string)$nodes[0][$attributes[$i]];
+            $value = (string)$nodes[0][$attributes[$i]];
+            $response[$labels[$i]] = !empty($value) ? $value : null;
         }
         return $response;
     }

@@ -136,4 +136,28 @@ class XmlMapperTest extends TestCase {
         $this->assertEquals('60', $response['items'][3]['value']);
     }
 
+    /**
+     * Should map attribute
+     */
+    public function testShouldGetNulls() {
+        $response = XmlMapper::mapTo([
+            'from' => '/note@from',
+            'to' => '/note@to',
+            'tom' => '/note@tom',
+            'simpleItem2' => '/note/item2',
+        ], $this->xml);
+
+
+        $this->assertNotNull($response);
+        $this->assertArrayHasKey('from', $response);
+        $this->assertArrayHasKey('to', $response);
+        $this->assertArrayHasKey('tom', $response);
+        $this->assertArrayHasKey('simpleItem2', $response);
+
+        $this->assertEquals('Tove', $response['from']);
+        $this->assertEquals('Jani', $response['to']);
+        $this->assertNull($response['tom']);
+        $this->assertNull($response['simpleItem2']);
+    }
+
 }
