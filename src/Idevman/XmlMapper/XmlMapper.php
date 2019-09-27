@@ -54,7 +54,12 @@ class XmlMapper {
             $isArray = true;
             $tokens[0] = str_replace('[]', '', $tokens[0]);
         }
-        $nodes = $root->xpath($tokens[0]);
+        $nodes = [];
+        try {
+            $nodes = $root->xpath($tokens[0]);
+        } catch(\Exception $ex) {
+            return null;
+        }
         if (empty($nodes)) {
             return null;
         }
@@ -92,7 +97,12 @@ class XmlMapper {
             $isArray = true;
             $path = str_replace('[]', '', $path);
         }
-        $nodes = $root->xpath($path);
+        $nodes = [];
+        try {
+            $nodes = $root->xpath($path);
+        } catch(\Exception $ex) {
+            return null;
+        }
         if (empty($nodes)) {
             return null;
         }
