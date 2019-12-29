@@ -11,7 +11,8 @@ Create a mapped array from XML data using alias from MAP as laravel plugin.
 
 #### Dependencies:
 
-* [Laravel 5.5+](https://github.com/laravel/laravel)
+* [Laravel 6.2+](https://github.com/laravel/laravel) (v2.0.0)
+* [Laravel 5.5+](https://github.com/laravel/laravel) (v1.0.4)
 
 #### Installation:
 
